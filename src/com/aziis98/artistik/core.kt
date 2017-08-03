@@ -16,6 +16,10 @@ interface ILocated<out T> {
     val y: T
 }
 
+interface ReadRef<out T> {
+    val value: T
+}
+
 // -----------< Concrete Classes >----------- //
 
 data class Rectangle<out T>(
@@ -30,4 +34,14 @@ data class Dimensions<out T>(
     override val height: T = width
 ) : IDimensioned<T>
 
-data class Ref<T>(var value: T)
+data class Ref<T>(override var value: T) : ReadRef<T> {
+    val readOnly : ReadRef<T> = this
+}
+
+// -----------< Concrete Classes >----------- //
+
+operator fun Dimensions<Int>.times(scalar: Int) = Dimensions(width * scalar, height * scalar)
+
+operator fun Dimensions<Int>.times(scalar: Double) = Dimensions(width * scalar, height * scalar)
+
+inline fun <T, R> Dimensions<T>.map(transform: (T) -> R) = Dimensions(transform(width), transform(height))

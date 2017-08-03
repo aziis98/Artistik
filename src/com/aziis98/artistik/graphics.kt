@@ -15,6 +15,17 @@ inline fun GraphicsContext.block(safe: () -> Unit) {
     restore()
 }
 
+inline fun GraphicsContext.normalized(safe: () -> Unit) {
+    block {
+        val (width, height) = dimensions
+
+        scale(width, height)
+        lineWidth = 2.0 / (width + height)
+
+        safe()
+    }
+}
+
 inline fun GraphicsContext.stroke(block: () -> Unit) {
     beginPath()
     block()

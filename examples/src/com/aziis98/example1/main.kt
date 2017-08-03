@@ -4,64 +4,63 @@ import com.aziis98.artistik.*
 import javafx.application.Application
 import javafx.geometry.Point2D
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
+import javafx.scene.shape.StrokeLineJoin
 import javafx.stage.Stage
-import java.awt.Point
+import java.util.*
+import kotlin.concurrent.timer
 
 /*
  * Created by aziis98 on 02/08/2017.
  */
 
-object ArtistikProject1 : ArtistikProject<ArtistikProject1.State>, ArtistikModel<ArtistikProject1.State> {
-
-    data class State(
-        val list: List<Point2D>
-    )
-
-    override fun initialize(globals: ArtistikGlobals) = State(
-            listOf(Point2D(
-                    (0.0 .. globals.dimensions.width).random(), (0.0 .. globals.dimensions.height).random()
-            ))
-    )
-
-    override fun step(globals: ArtistikGlobals, previousState: State): State {
-        return State(listOf(
-
-                previousState.list,
-
-                listOf(Point2D(
-                        (0.0 .. globals.dimensions.width).random(), (0.0 .. globals.dimensions.height).random()
-                ))
-
-        ).flatten())
+fun computeState(n: Int) = Random(0).let { r ->
+    listOfSize(n).map {
+        Point2D(r.nextDouble(), r.nextDouble())
     }
+}
 
-    override fun render(state: State, g: GraphicsContext) {
-        g.clearAll()
-        g.stroke = Color.BLACK
+object Project1 : ArtistikRenderer<List<Point2D>> {
 
-        g.stroke {
+    override fun render(g: GraphicsContext, state: List<Point2D>) {
 
-            val first = state.list.first()
-            g.moveTo(first.x, first.y)
+        g.normalized {
 
-            state.list.forEach {
-                g.lineTo(it.x, it.y)
+            g.clearAll()
+
+            g.stroke = Color.BLACK
+            g.lineJoin = StrokeLineJoin.ROUND
+
+            g.stroke {
+
+                val (head, tail) = state.headTail()
+
+                g.moveTo(head.x, head.y)
+
+                tail.forEach {
+                    g.lineTo(it.x, it.y)
+                }
+
             }
 
         }
+
     }
 
 }
 
 class ArtistikTestApplication : Application() {
     override fun start(primaryStage: Stage) {
-        val (_, _, canvas, _, stateRef) = constructArtistikFx(ArtistikProject1, ArtistikProject1, primaryStage)
 
-        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED) { _ ->
-            println(stateRef.value.list.size)
+        val stateRef = Ref(computeState(2))
+
+        val artistikWindow = constructArtistikFx(Project1, stateRef, primaryStage,
+                                                 "Project1", 800.0, 600.0)
+
+        timer(daemon = true, initialDelay = 70L, period = 1000L / 30L) {
+            stateRef.value = computeState((artistikWindow.time.value / 30).toInt())
         }
+
     }
 }
 

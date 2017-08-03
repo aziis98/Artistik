@@ -32,3 +32,35 @@ fun memorydump() {
 
     println("------------------------")
 }
+
+/**
+ * Returns a pair containing the first n elements in the left and the remaining in the right
+ */
+fun <T> List<T>.divide(index: Int) : Pair<List<T>, List<T>> = Pair(take(index), drop(index))
+
+/**
+ * Extension method for Haskell lovers, returns Pair(first(), drop(1))
+ */
+fun <T> List<T>.headTail() = Pair(first(), drop(1))
+
+/**
+ * Extension method for Haskell lovers, returns Pair(dropLast(1), last())
+ */
+fun <T> List<T>.initialLast() = Pair(dropLast(1), last())
+
+fun listOfSize(size: Int) = (1 .. size).map { Unit }
+
+fun mutableListOfSize(size: Int) = (1 .. size).map { Unit }.toMutableList()
+
+object Time {
+
+    fun milliTime() = System.nanoTime() / 1000000
+
+}
+
+
+
+
+
+
+
