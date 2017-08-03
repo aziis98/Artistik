@@ -1,40 +1,34 @@
 package com.aziis98.artistik
 
+import javafx.geometry.Point2D
 import java.util.*
 
 /*
  * Created by aziis98 on 02/08/2017.
  */
 
-object Randoms {
+/**
+ * Instance random object
+ */
+val RANDOM = Random()
 
-    private val random = Random(0L)
+fun ClosedRange<Int>.random() = RANDOM.randomInt(start, endInclusive)
 
-    var seed = 0L
-        get() = field
-        set(value) {
-            field = value
-            random.setSeed(value)
-        }
+fun ClosedRange<Double>.random() = RANDOM.randomDouble(start, endInclusive)
 
-    fun randomInt(min: Int, max: Int) = random.nextInt(max - min + 1) + min
+fun Random.randomInt(min: Int, max: Int) = nextInt(max - min + 1) + min
 
-    fun randomDouble(min: Double, max: Double) =
-        if (random.nextBoolean()) {
-            (1.0 - random.nextDouble()) * (max - min) + min
-        }
-        else {
-            random.nextDouble() * (max - min) + min
-        }
-
-    fun randomDouble(): Double = randomDouble(0.0, 1.0)
-
-    fun randomGaussian(): Double = random.nextGaussian()
-
-    fun <T> randomIn(list: List<T>) = list[randomInt(0, list.lastIndex)]
-
+fun Random.randomDouble(min: Double, max: Double): Double {
+    return if (nextBoolean()) {
+        (1.0 - nextDouble()) * (max - min) + min
+    }
+    else {
+        nextDouble() * (max - min) + min
+    }
 }
 
-fun ClosedRange<Int>.random() = Randoms.randomInt(start, endInclusive)
+fun <T> Random.randomIn(list: List<T>) = list[randomInt(0, list.lastIndex)]
 
-fun ClosedRange<Double>.random() = Randoms.randomDouble(start, endInclusive)
+fun Random.randomDouble() = randomDouble(0.0, 1.0)
+
+fun Random.randomUnitVector() = randomDouble(0.0, 2 * Math.PI).let { theta -> Point2D(Math.cos(theta), Math.sin(theta)) }

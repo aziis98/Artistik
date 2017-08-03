@@ -16,7 +16,7 @@ import kotlin.concurrent.timer
 
 fun computeState(n: Int) = Random(0).let { r ->
     listOfSize(n).map {
-        Point2D(r.nextDouble(), r.nextDouble())
+        Point2D(0.5, 0.5) + r.randomUnitVector() * r.nextGaussian() * 0.1
     }
 }
 
@@ -24,11 +24,14 @@ object Project1 : ArtistikRenderer<List<Point2D>> {
 
     override fun render(g: GraphicsContext, state: List<Point2D>) {
 
-        g.normalized {
+        g.semiNormalized {
 
             g.clearAll()
 
-            g.stroke = Color.BLACK
+            g.fill = Color.web("#000")
+            g.fillRect(0.0, 0.0, 1.0, 1.0)
+
+            g.stroke = Color.web("#fff")
             g.lineJoin = StrokeLineJoin.ROUND
 
             g.stroke {
@@ -55,10 +58,10 @@ class ArtistikTestApplication : Application() {
         val stateRef = Ref(computeState(2))
 
         val artistikWindow = constructArtistikFx(Project1, stateRef, primaryStage,
-                                                 "Project1", 800.0, 600.0)
+                                                 "Project1", DIMENSION_720s)
 
-        timer(daemon = true, initialDelay = 70L, period = 1000L / 30L) {
-            stateRef.value = computeState((artistikWindow.time.value / 30).toInt())
+        timer(daemon = true, initialDelay = 70L, period = 1000L / 15L) {
+            stateRef.value = computeState((artistikWindow.time / 30).toInt())
         }
 
     }

@@ -9,20 +9,32 @@ import javafx.scene.canvas.GraphicsContext
 val GraphicsContext.dimensions: Dimensions<Double>
     get() = Dimensions(canvas.width, canvas.height)
 
-inline fun GraphicsContext.block(safe: () -> Unit) {
+inline fun GraphicsContext.block(block: () -> Unit) {
     save()
-    safe()
+    block()
     restore()
 }
 
-inline fun GraphicsContext.normalized(safe: () -> Unit) {
+inline fun GraphicsContext.normalized(block: () -> Unit) {
     block {
         val (width, height) = dimensions
 
         scale(width, height)
         lineWidth = 2.0 / (width + height)
 
-        safe()
+        block()
+    }
+}
+
+inline fun GraphicsContext.semiNormalized(block: (ratio: Double) -> Unit) {
+    block {
+        val (width, height) = dimensions
+        val side = width
+
+        scale(side, side)
+        lineWidth = 1.0 / side
+
+        block(width / height)
     }
 }
 

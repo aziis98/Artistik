@@ -22,7 +22,7 @@ fun <S> constructArtistikFx(
     stateRef: Ref<S>,
     stage: Stage,
     title: String = "<Untitled>",
-    initialWidth: Double = 600.0, initialHeight: Double = 500.0
+    initialDimensions: Dimensions<Int>
 ): ArtistikWindow {
 
     val windowScalingFactor = Toolkit.getDefaultToolkit().screenResolution * 0.01
@@ -30,8 +30,8 @@ fun <S> constructArtistikFx(
 
     stage.scene = Scene(
             Pane(canvas),
-            initialWidth * windowScalingFactor,
-            initialHeight * windowScalingFactor
+            initialDimensions.width * windowScalingFactor,
+            initialDimensions.height * windowScalingFactor
     )
 
     stage.minWidth = 400.0

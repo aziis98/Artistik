@@ -1,5 +1,7 @@
 package com.aziis98.artistik
 
+import javafx.geometry.Point2D
+
 /*
  * Created by aziis98 on 02/08/2017.
  */
@@ -37,11 +39,3 @@ data class Dimensions<out T>(
 data class Ref<T>(override var value: T) : ReadRef<T> {
     val readOnly : ReadRef<T> = this
 }
-
-// -----------< Concrete Classes >----------- //
-
-operator fun Dimensions<Int>.times(scalar: Int) = Dimensions(width * scalar, height * scalar)
-
-operator fun Dimensions<Int>.times(scalar: Double) = Dimensions(width * scalar, height * scalar)
-
-inline fun <T, R> Dimensions<T>.map(transform: (T) -> R) = Dimensions(transform(width), transform(height))

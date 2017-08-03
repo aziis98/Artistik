@@ -1,13 +1,17 @@
 package com.aziis98.artistik
 
-import javafx.scene.canvas.GraphicsContext
-import java.io.OutputStream
-import java.io.PrintStream
+import javafx.geometry.Point2D
 import kotlin.test.currentStackTrace
 
 /*
  * Created by aziis98 on 02/08/2017.
  */
+
+object Time {
+
+    fun milliTime() = System.nanoTime() / 1000000
+
+}
 
 fun stacktrace(offset: Int) = currentStackTrace()[offset + 1].toString()
 
@@ -33,6 +37,10 @@ fun memorydump() {
     println("------------------------")
 }
 
+// -----------< Utility Methods >----------- //
+
+// Lists
+
 /**
  * Returns a pair containing the first n elements in the left and the remaining in the right
  */
@@ -50,14 +58,24 @@ fun <T> List<T>.initialLast() = Pair(dropLast(1), last())
 
 fun listOfSize(size: Int) = (1 .. size).map { Unit }
 
-fun mutableListOfSize(size: Int) = (1 .. size).map { Unit }.toMutableList()
 
-object Time {
+// Dimensions
 
-    fun milliTime() = System.nanoTime() / 1000000
+operator fun Dimensions<Int>.times(scalar: Int) = Dimensions(width * scalar, height * scalar)
 
-}
+operator fun Dimensions<Int>.times(scalar: Double) = Dimensions((width * scalar).toInt(), (height * scalar).toInt())
 
+// Point2D
+
+operator fun Point2D.plus(other: Point2D): Point2D = add(other)
+
+operator fun Point2D.minus(other: Point2D): Point2D = subtract(other)
+
+operator fun Point2D.times(scalar: Double): Point2D = this.multiply(scalar)
+
+operator fun Point2D.div(scalar: Double): Point2D = this.multiply(1.0 / scalar)
+
+operator fun Point2D.times(other: Point2D): Double = this.dotProduct(other)
 
 
 
