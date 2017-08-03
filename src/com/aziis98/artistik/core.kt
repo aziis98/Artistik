@@ -24,6 +24,11 @@ interface ReadRef<out T> {
 
 // -----------< Concrete Classes >----------- //
 
+data class Point<out T>(
+    override val x: T,
+    override val y: T
+) : ILocated<T>
+
 data class Rectangle<out T>(
     override val x: T,
     override val y: T,

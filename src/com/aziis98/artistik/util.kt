@@ -11,6 +11,8 @@ object Time {
 
     fun milliTime() = System.nanoTime() / 1000000
 
+    fun sleep(millis: Long) = Thread.sleep(millis)
+
 }
 
 fun stacktrace(offset: Int) = currentStackTrace()[offset + 1].toString()

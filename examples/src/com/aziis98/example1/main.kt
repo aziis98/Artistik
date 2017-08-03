@@ -24,7 +24,7 @@ object Project1 : ArtistikRenderer<List<Point2D>> {
 
     override fun render(g: GraphicsContext, state: List<Point2D>) {
 
-        g.semiNormalized {
+        g.normalized {
 
             g.clearAll()
 
