@@ -10,6 +10,7 @@ import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import javafx.scene.transform.Affine
 import javafx.stage.Stage
+import kotlin.system.measureNanoTime
 
 /*
  * Created by aziis98 on 03/08/2017.
@@ -33,7 +34,7 @@ val renderer = object : ArtistikRenderer<PixelGrid> {
     }
 }
 
-class MandelbrotComputation(image: WritableImage, val centerX: Double = 0.0, val centerY: Double = 0.0, val scale: Double = 1.0, sections: Int) : WritableImageComputation(image, sections) {
+class MandelbrotComputation(image: WritableImage, val centerX: Double = 0.0, val centerY: Double = 0.0, val scale: Double = 1.0) : WritableImageComputation(image) {
 
     @Suppress("NAME_SHADOWING")
     override fun computePixel(x: Int, y: Int): Color {
@@ -62,7 +63,17 @@ class App : Application() {
 
         constructArtistikFx(renderer, pixelGridRef, primaryStage, "PixelGrid", DIMENSION_720s * 1.2)
 
-        MandelbrotComputation(pixelGridRef.value.image, sections = 10).run()
+        val computation = MandelbrotComputation(pixelGridRef.value.image)
+
+        computation.run(1)
+
+        val time = measureNanoTime {
+            while (computation.isGoing) {
+                Thread.sleep(0)
+            }
+        }
+
+        println("Result: ${time / 1000000}ms")
 
     }
 }

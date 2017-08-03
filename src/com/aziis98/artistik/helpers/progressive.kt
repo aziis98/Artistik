@@ -28,17 +28,13 @@ abstract class ProgressiveTask<A, B> {
 
     abstract val totalComputationCount: Int
 
-    abstract fun hasNext(sender: Any): Boolean
-
-    abstract fun next(sender: Any): A
+    abstract fun next(count: Int): A
 
     protected abstract fun compute(param: A)
 
-    fun update(sender: Any = Thread.currentThread().id) {
-        if (isGoing && hasNext(sender))
-        {
-            val next = next(sender)
-            computationCount++
+    fun update() {
+        if (isGoing) {
+            val next = next(computationCount++)
             compute(next)
         }
     }
@@ -49,7 +45,7 @@ abstract class ProgressiveTask<A, B> {
 
 }
 
-abstract class WritableImageComputation(val image: WritableImage, val sections: Int) : ProgressiveTask<Point<Int>, WritableImage>(), WithThreadCount {
+abstract class WritableImageComputation(val image: WritableImage) : ProgressiveTask<Point<Int>, WritableImage>() {
 
     val width
         get() = image.width.toInt()
@@ -58,23 +54,9 @@ abstract class WritableImageComputation(val image: WritableImage, val sections: 
 
     abstract fun computePixel(x: Int, y: Int): Color
 
-    override val threadCount: Int
-        get() = sections
-
     override val totalComputationCount = width * height
 
-    val countMap = LinkedHashMap<Any, Pair<Int, Int>>()
-
-    override fun hasNext(sender: Any) = (countMap[sender]?.second ?: 0) < totalComputationCount / sections
-
-    override fun next(sender: Any): Point<Int> {
-
-        val counter = countMap.getOrPut(sender) { countMap.size to 0 }.second
-        val pt = Point(counter % width, counter / width + height / sections * countMap[sender]!!.first)
-        countMap[sender] = Pair(countMap[sender]!!.first, counter + 1)
-
-        return pt
-    }
+    override fun next(count: Int): Point<Int> = Point(count % width, count / width)
 
     override fun compute(param: Point<Int>) {
         image.pixelWriter.setColor(param.x, param.y, computePixel(param.x, param.y))
