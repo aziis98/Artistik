@@ -8,7 +8,6 @@ import javafx.geometry.Point2D
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
-import javafx.scene.transform.Affine
 import javafx.stage.Stage
 import kotlin.system.measureNanoTime
 
@@ -65,15 +64,7 @@ class App : Application() {
 
         val computation = MandelbrotComputation(pixelGridRef.value.image)
 
-        computation.run(1)
-
-        val time = measureNanoTime {
-            while (computation.isGoing) {
-                Thread.sleep(0)
-            }
-        }
-
-        println("Result: ${time / 1000000}ms")
+        computation.run(4)
 
     }
 }

@@ -30,8 +30,8 @@ fun <S> constructArtistikFx(
 
     stage.scene = Scene(
             Pane(canvas),
-            initialDimensions.width * windowScalingFactor,
-            initialDimensions.height * windowScalingFactor
+            initialDimensions.width / windowScalingFactor,
+            initialDimensions.height / windowScalingFactor
     )
 
     stage.minWidth = 400.0
